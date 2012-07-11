@@ -14,12 +14,21 @@
  */
 package grails.plugin.reveng
 
+import org.apache.log4j.BasicConfigurator
+import org.apache.log4j.LogManager
+import org.apache.log4j.Level
+
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 class RevengRunner {
 
 	static void main(String[] args) {
+        // paulb: added these lines to enable logging - was getting a "no appenders" exception
+        BasicConfigurator.configure()
+        LogManager.rootLogger.level = Level.WARN
+        LogManager.getLogger('grails.plugin.reveng').level = Level.INFO
+
 		String configPath = args[0]
 		String appName = args[1]
 

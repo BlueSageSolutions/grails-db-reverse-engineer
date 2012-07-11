@@ -197,6 +197,11 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			fixed.append delimiter
 		}
 
+        // paulb: add import for Joda
+        fixed.append delimiter
+       	fixed.append 'import org.joda.time.*'
+       	fixed.append delimiter
+
 		imports = fixed.toString()
 		if (imports) {
 			return imports + newline + newline
@@ -520,7 +525,13 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 
 	String getJavaTypeName(Property p, boolean useGenerics) {
 		String name = super.getJavaTypeName(p, useGenerics)
-		typeNameReplacements[name] ?: name
+        if (p.name.toLowerCase().contains('datetime')) {
+            'Instant'
+        } else if (p.name.toLowerCase().contains('date')) {
+            'LocalDate'
+        } else {
+		    typeNameReplacements[name] ?: name
+        }
 	}
 
 	private String findManyToManyOtherSide(Property prop) {
