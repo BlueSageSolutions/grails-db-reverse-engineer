@@ -43,6 +43,15 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		'long':    'Long',
 		'short':   'Short']
 
+    //paulb: these will be specified in our BaseDomain class
+    private static final ignoredProperties = [
+            'createdDateTime',
+            'createdByUserId',
+            'modifiedDateTime',
+            'modifiedByUserId',
+            'effectiveDateTime',
+            'expirationDateTime']
+
 	private PersistentClass clazz
 	private Cfg2HbmTool c2h
 	private Configuration configuration
@@ -289,6 +298,10 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 	String renderConstraints() {
 		def constraints = new StringBuilder()
 		getAllPropertiesIterator().each { Property property ->
+            if (ignoredProperties.contains(property.name)) {
+                return
+            }
+
 			if (!getMetaAttribAsBool(property, 'gen-property', true)) {
 				return
 			}
@@ -441,6 +454,9 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 				boolean isReallyManyToMany = strategy.isReallyManyToManyTable(prop.value.collectionTable)
 				if ((bidirectionalManyToOne && !isManyToMany && !isReallyManyToMany) || isManyToMany) {
 					String classShortName = classShortName(prop.value.element.type.name)
+                    //paulb: fix for Addresses table - 'properties' is not a valid property name
+                    if (prop.name == 'properties')
+                        prop.name = 'props'
 					hasMany << "$prop.name: $classShortName"
 					if (isManyToMany) {
 						if (strategy.isManyToManyBelongsTo(prop.value.collectionTable, prop.persistentClass.table)) {
@@ -486,7 +502,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		def props = new StringBuilder()
 		getAllPropertiesIterator().each { prop ->
 			if (getMetaAttribAsBool(prop, 'gen-property', true)) {
-				if (findRealIdName(prop) == prop.name) {
+				if (findRealIdName(prop) == prop.name && !ignoredProperties.contains(prop.name)) {
 					props.append '\t'
 					props.append getJavaTypeName(prop, true)
 					props.append ' '
@@ -516,7 +532,15 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 	}
 
 	String renderClassStart() {
-		"class ${getDeclarationName()}${renderImplements()}{"
+        String declarationName = getDeclarationName()
+        String prefix = declarationName.substring(0,3)
+        String baseClass = "BaseDomain"
+        if (prefix.equals('Ref')) {
+            baseClass = "BaseRefDomain"
+        } else if (prefix.equals('Sys')) {
+            baseClass = "BaseSysDomain"
+        }
+		"class ${declarationName} extends ${baseClass}${renderImplements()}{"
 	}
 
 	String renderImplements() {
