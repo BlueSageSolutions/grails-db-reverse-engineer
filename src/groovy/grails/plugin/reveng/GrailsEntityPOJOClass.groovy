@@ -540,7 +540,11 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
         } else if (prefix.equals('Sys') && !declarationName.equalsIgnoreCase('SysUser')) {
             baseClass = "BaseSysDomain"
         }
-		"class ${declarationName} extends ${baseClass}${renderImplements()}{"
+
+        if (declarationName.equalsIgnoreCase('SchemaVersion'))
+		    "class ${declarationName} ${renderImplements()}{"
+        else
+           "class ${declarationName} extends ${baseClass}${renderImplements()}{"
 	}
 
 	String renderImplements() {
