@@ -206,9 +206,9 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			fixed.append delimiter
 		}
 
-        // paulb: add import for Joda
+        // paulb: add import for Joda and Hibernate validator constraints
         fixed.append delimiter
-       	fixed.append 'import org.joda.time.*'
+       	fixed.append 'import org.joda.time.*\nimport org.hibernate.validator.constraints.*'
        	fixed.append delimiter
 
 		imports = fixed.toString()
@@ -506,8 +506,12 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		getAllPropertiesIterator().each { prop ->
 			if (getMetaAttribAsBool(prop, 'gen-property', true)) {
 				if (findRealIdName(prop) == prop.name && !ignoredProperties.contains(prop.name)) {
-					props.append '\t'
-					props.append getJavaTypeName(prop, true)
+                    props.append '\t'
+                    String javaTypeName = getJavaTypeName(prop, true)
+                    if (javaTypeName.equalsIgnoreCase('String') && !prop.isNullable()) {
+                        props.append('@NotBlank\n\t')
+                    }
+					props.append javaTypeName
 					props.append ' '
 					props.append prop.name
 					props.append newline
