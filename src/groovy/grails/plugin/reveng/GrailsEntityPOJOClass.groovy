@@ -313,17 +313,17 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			}
 
 			def values = [:]
-			if (!property.type.isCollectionType() && property.isNullable()) {
-				values.nullable = true
-			}
+//			if (!property.type.isCollectionType() && property.isNullable()) {
+//				values.nullable = true
+//			}
 			if (property.columnSpan == 1) {
 				Column column = property.columnIterator.next()
-				if (column.length && column.length != Column.DEFAULT_LENGTH &&
-                        (!property.name.toLowerCase().contains('date') || ignoredDateProperties.contains(property.name)) &&
-                        !property.name.toLowerCase().endsWith('time') &&
-                        !property.name.equalsIgnoreCase('installedOn')) {
-					values.maxSize = column.length
-				}
+//				if (column.length && column.length != Column.DEFAULT_LENGTH &&
+//                        (!property.name.toLowerCase().contains('date') || ignoredDateProperties.contains(property.name)) &&
+//                        !property.name.toLowerCase().endsWith('time') &&
+//                        !property.name.equalsIgnoreCase('installedOn')) {
+//					values.maxSize = column.length
+//				}
 
 				if (column.scale != 0 && column.scale != Column.DEFAULT_SCALE) {
 					values.scale = column.scale
