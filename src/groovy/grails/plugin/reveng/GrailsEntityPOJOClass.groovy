@@ -512,11 +512,9 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		getAllPropertiesIterator().each { prop ->
 			if (getMetaAttribAsBool(prop, 'gen-property', true)) {
 				if (findRealIdName(prop) == prop.name && !ignoredProperties.contains(prop.name)) {
-                    props.append '\t'
                     String javaTypeName = getJavaTypeName(prop, true)
-                    if (javaTypeName.equalsIgnoreCase('String') && !prop.isNullable()) {
-                        props.append('@NotBlank\n\t')
-                    }
+                    appendAnnotations(prop, javaTypeName, props);
+                    props.append '\t'
 					props.append javaTypeName
 					props.append ' '
 					props.append prop.name
@@ -526,6 +524,8 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		}
 
 		for (prop in newProperties) {
+            String javaTypeName = getJavaTypeName(prop, true)
+            appendAnnotations(prop, javaTypeName, props);
 			props.append '\t'
 			props.append classShortName(prop.value.referencedEntityName)
 			props.append ' '
@@ -535,6 +535,43 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 
 		props.toString()
 	}
+
+    void appendAnnotations(Property prop, String javaTypeName, StringBuilder props) {
+        StringBuilder annotationBuilder = new StringBuilder()
+        if (!prop.type.isCollectionType() && prop.isNullable()) {
+            // values.nullable = true
+        } else {
+            if (javaTypeName.equalsIgnoreCase('String')) {
+                annotationBuilder.append(' @NotBlank')
+            } else {
+                annotationBuilder.append(' @NotNull')
+            }
+        }
+
+        if (prop.columnSpan == 1) {
+            Column column = prop.columnIterator.next()
+
+            if (column.length && column.length != Column.DEFAULT_LENGTH &&
+                    (!prop.name.toLowerCase().contains('date') || ignoredDateProperties.contains(prop.name)) &&
+                    !prop.name.toLowerCase().endsWith('time') &&
+                    !prop.name.equalsIgnoreCase('installedOn')) {
+
+                if (javaTypeName.equalsIgnoreCase('String')) {
+                    annotationBuilder.append(' @Size(max=' + column.length + ')')
+                } else {
+                    annotationBuilder.append(' @Max(value=' + column.length + ')')
+                }
+            }
+        }
+
+        if (annotationBuilder.length() > 0) {
+            // remove first space
+            String annotations = annotationBuilder.toString().substring(1);
+            props.append '\t'
+            props.append annotations
+            props.append newline
+        }
+    }
 
 	String renderMapping() {
 		def mapping = new StringBuilder()
