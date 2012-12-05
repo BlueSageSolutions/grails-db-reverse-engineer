@@ -214,7 +214,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 
         // paulb: add import for Joda and Hibernate validator constraints
         fixed.append delimiter
-       	fixed.append 'import org.joda.time.*\nimport org.hibernate.validator.constraints.*'
+       	fixed.append 'import org.joda.time.*\nimport org.hibernate.validator.constraints.*\nimport javax.validation.constraints.*'
        	fixed.append delimiter
 
 		imports = fixed.toString()
@@ -559,7 +559,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
                 if (javaTypeName.equalsIgnoreCase('String')) {
                     annotationBuilder.append(' @Size(max=' + column.length + ')')
                 } else {
-                    annotationBuilder.append(' @Max(value=' + column.length + ')')
+                    annotationBuilder.append(' @Max(value=' + column.length + 'L)')
                 }
             }
         }
