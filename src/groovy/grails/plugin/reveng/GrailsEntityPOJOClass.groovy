@@ -1,4 +1,4 @@
-/* Copyright 2010-2011 SpringSource.
+/* Copyright 2010-2012 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,15 +25,21 @@ import org.hibernate.mapping.UniqueKey
 import org.hibernate.tool.hbm2x.Cfg2HbmTool
 import org.hibernate.tool.hbm2x.Cfg2JavaTool
 import org.hibernate.tool.hbm2x.pojo.EntityPOJOClass
+import org.hibernate.type.CalendarDateType
+import org.hibernate.type.CalendarType
+import org.hibernate.type.DateType
 import org.hibernate.type.IntegerType
 import org.hibernate.type.LongType
+import org.hibernate.type.TimeType
+import org.hibernate.type.TimestampType
+import org.hibernate.type.Type
 
 /**
  * @author <a href='mailto:burt@burtbeckwith.com'>Burt Beckwith</a>
  */
 class GrailsEntityPOJOClass extends EntityPOJOClass {
 
-	private static final Map<String, String> typeNameReplacements = [
+	protected static final Map<String, String> typeNameReplacements = [
 		'boolean': 'Boolean',
 		'byte':    'Byte',
 		'char':    'Character',
@@ -58,12 +64,12 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
             'dueDateHours',
             'dueDateCalendarTypeId']
 
-	private PersistentClass clazz
-	private Cfg2HbmTool c2h
-	private Configuration configuration
-	private ConfigObject revengConfig
-	private String newline = System.getProperty('line.separator')
-	private newProperties = []
+    protected PersistentClass clazz
+    protected Cfg2HbmTool c2h
+    protected Configuration configuration
+    protected ConfigObject revengConfig
+    protected String newline = System.getProperty('line.separator')
+    protected newProperties = []
 
 	GrailsEntityPOJOClass(PersistentClass clazz, Cfg2JavaTool cfg, Cfg2HbmTool c2h,
 			Configuration configuration, ConfigObject revengConfig) {
@@ -83,29 +89,30 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		def idProperty = getIdentifierProperty()
 		def versionProperty = getVersionProperty()
 
-		super.getAllPropertiesIterator().each {
-			if (it == versionProperty) {
+		super.getAllPropertiesIterator().each { Property property ->
+			if (property == versionProperty) {
 				return
 			}
 
-			if (it == idProperty) {
-				if (c2j.isComponent(it)) {
-					it.value.propertyIterator.each { idProp ->
+			if (property == idProperty) {
+				if (c2j.isComponent(property)) {
+					property.value.propertyIterator.each { idProp ->
 						props << idProp
 					}
 					return
 				}
-				if (it.name == 'id' || it.type instanceof LongType || it.type instanceof IntegerType) {
+				if (property.name == 'id' || property.type instanceof LongType || property.type instanceof IntegerType) {
 					return
 				}
 			}
 
-			if (it.value instanceof ManyToOne || it.value instanceof org.hibernate.mapping.Set) {
+			if (property.value instanceof ManyToOne || property.value instanceof org.hibernate.mapping.Set) {
 				return
 			}
 
-			props << it
+			props << property
 		}
+
 		props.iterator()
 	}
 
@@ -225,7 +232,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		''
 	}
 
-	private boolean isValidImport(String candidate) {
+	protected boolean isValidImport(String candidate) {
 		if ('java.math.BigDecimal'.equals(candidate) ||
 		    'java.math.BigInteger'.equals(candidate)) {
 			return false
@@ -240,7 +247,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		true
 	}
 
-	private boolean isInPackage(String candidate, String pkg) {
+	protected boolean isInPackage(String candidate, String pkg) {
 		if (!candidate.contains(pkg)) {
 			return false
 		}
@@ -271,7 +278,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		equalsDef.append '\t\tdef builder = new EqualsBuilder()'
 		equalsDef.append newline
 
-		getAllPropertiesIterator().each { property ->
+		getAllPropertiesIterator().each { Property property ->
 			if (c2j.getMetaAsBool(property, 'use-in-equals')) {
 				String name = findRealIdName(property)
 				if (name != property.name) {
@@ -302,7 +309,9 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 	}
 
 	String renderConstraints() {
+
 		def constraints = new StringBuilder()
+
 		getAllPropertiesIterator().each { Property property ->
             if (ignoredProperties.contains(property.name)) {
                 return
@@ -313,15 +322,15 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			}
 
 			def values = [:]
+            
+
 //			if (!property.type.isCollectionType() && property.isNullable()) {
 //				values.nullable = true
 //			}
+
 			if (property.columnSpan == 1) {
 				Column column = property.columnIterator.next()
-//				if (column.length && column.length != Column.DEFAULT_LENGTH &&
-//                        (!property.name.toLowerCase().contains('date') || ignoredDateProperties.contains(property.name)) &&
-//                        !property.name.toLowerCase().endsWith('time') &&
-//                        !property.name.equalsIgnoreCase('installedOn')) {
+//				if (column.length && column.length != Column.DEFAULT_LENGTH && !isDateType(property.type)) {
 //					values.maxSize = column.length
 //				}
 
@@ -357,18 +366,23 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		constraints.length() ? "\tstatic constraints = {$newline$constraints\t}" : ''
 	}
 
+	protected boolean isDateType(Type type) {
+		(type instanceof DateType) || (type instanceof TimestampType) || (type instanceof TimeType) ||
+		(type instanceof CalendarType) || (type instanceof CalendarDateType)
+	}
+
 	void findNewProperties() {
 
 		def idProperty = getIdentifierProperty()
 		def versionProperty = getVersionProperty()
 
-		super.getAllPropertiesIterator().each {
-			if (it == versionProperty || it == idProperty) {
+		super.getAllPropertiesIterator().each { Property property ->
+			if (property == versionProperty || property == idProperty) {
 				return
 			}
 
-			if (it.value instanceof ManyToOne) {
-				newProperties << it
+			if (property.value instanceof ManyToOne) {
+				newProperties << property
 			}
 		}
 	}
@@ -436,7 +450,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		combine('static mappedBy = [', ', ', ']', mappedBy, true) + newline
 	}
 
-	private void findBelongsToAndHasMany(Set belongs, Set hasMany) {
+	protected void findBelongsToAndHasMany(Set belongs, Set hasMany) {
 
 		boolean bidirectionalManyToOne = revengConfig.bidirectionalManyToOne instanceof Boolean ?
 				revengConfig.bidirectionalManyToOne : true
@@ -445,31 +459,31 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 
 		def idProperty = getIdentifierProperty()
 		def versionProperty = getVersionProperty()
-
 		def strategy = GrailsReverseEngineeringStrategy.INSTANCE
-		super.getAllPropertiesIterator().each { prop ->
-			if (prop == versionProperty || prop == idProperty) {
+
+		super.getAllPropertiesIterator().each { Property property ->
+			if (property == versionProperty || property == idProperty) {
 				return
 			}
 
-			if (bidirectionalManyToOne && prop.value instanceof ManyToOne) {
-				if (!isPartOfPrimaryKey(prop)) {
-					belongs << classShortName(prop.value.referencedEntityName)
+			if (bidirectionalManyToOne && property.value instanceof ManyToOne) {
+				if (!isPartOfPrimaryKey(property)) {
+					belongs << classShortName(property.value.referencedEntityName)
 				}
 			}
 
-			if (prop.value instanceof org.hibernate.mapping.Set) {
-				boolean isManyToMany = strategy.isManyToManyTable(prop.value.collectionTable)
-				boolean isReallyManyToMany = strategy.isReallyManyToManyTable(prop.value.collectionTable)
+			if (property.value instanceof org.hibernate.mapping.Set) {
+				boolean isManyToMany = strategy.isManyToManyTable(property.value.collectionTable)
+				boolean isReallyManyToMany = strategy.isReallyManyToManyTable(property.value.collectionTable)
 				if ((bidirectionalManyToOne && !isManyToMany && !isReallyManyToMany) || isManyToMany) {
-					String classShortName = classShortName(prop.value.element.type.name)
+					String classShortName = classShortName(property.value.element.type.name)
                     //paulb: fix for Addresses table - 'properties' is not a valid property name
-                    if (prop.name == 'properties')
-                        prop.name = 'props'
-					hasMany << "$prop.name: $classShortName"
+                    if (property.name == 'properties')
+                        property.name = 'props'
+					hasMany << "$property.name: $classShortName"
 					if (isManyToMany) {
-						if (strategy.isManyToManyBelongsTo(prop.value.collectionTable, prop.persistentClass.table)) {
-							belongs << findManyToManyOtherSide(prop)
+						if (strategy.isManyToManyBelongsTo(property.value.collectionTable, property.persistentClass.table)) {
+							belongs << findManyToManyOtherSide(property)
 						}
 					}
 				}
@@ -479,7 +493,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		belongs.remove classShortName(getMappedClassName())
 	}
 
-	private boolean isPartOfPrimaryKey(Property prop) {
+	protected boolean isPartOfPrimaryKey(Property prop) {
 		if (c2j.isComponent(getIdentifierProperty()) &&
 					GrailsReverseEngineeringStrategy.INSTANCE.isReallyManyToManyTable(clazz.table)) {
 			String propClassShortName = classShortName(prop.value.referencedEntityName)
@@ -493,7 +507,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		false
 	}
 
-	private String findRealIdName(Property prop) {
+	protected String findRealIdName(Property prop) {
 		if (c2j.isComponent(getIdentifierProperty()) &&
 					GrailsReverseEngineeringStrategy.INSTANCE.isReallyManyToManyTable(clazz.table)) {
 
@@ -509,15 +523,15 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 
 	String renderProperties() {
 		def props = new StringBuilder()
-		getAllPropertiesIterator().each { prop ->
-			if (getMetaAttribAsBool(prop, 'gen-property', true)) {
-				if (findRealIdName(prop) == prop.name && !ignoredProperties.contains(prop.name)) {
-                    String javaTypeName = getJavaTypeName(prop, true)
-                    appendAnnotations(prop, javaTypeName, props);
-                    props.append '\t'
-					props.append javaTypeName
+		getAllPropertiesIterator().each { Property property ->
+			if (getMetaAttribAsBool(property, 'gen-property', true)) {
+				if (findRealIdName(property) == property.name && !ignoredProperties.contains(property.name)) {
+                    String javaTypeName = getJavaTypeName(property, true)
+                    appendAnnotations(property, javaTypeName, props);
+					props.append '\t'
+					props.append getJavaTypeName(property, true)
 					props.append ' '
-					props.append prop.name
+					props.append property.name
 					props.append newline
 				}
 			}
@@ -613,7 +627,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
         }
 	}
 
-	private String findManyToManyOtherSide(Property prop) {
+	protected String findManyToManyOtherSide(Property prop) {
 		String belongsTo
 		prop.value.collectionTable.foreignKeyIterator.each { ForeignKey fk ->
 			if (prop.value.table != fk.referencedTable) {
@@ -623,14 +637,14 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		belongsTo
 	}
 
-	private String classShortName(String className) {
+	protected String classShortName(String className) {
 		if (className.indexOf('.') > -1) {
 			return className.substring(className.lastIndexOf('.') + 1)
 		}
 		className
 	}
 
-	private String combine(String start, String delim, String end, things, boolean lineUp = false) {
+	protected String combine(String start, String delim, String end, things, boolean lineUp = false) {
 		def buffer = new StringBuilder('\t')
 
 		String pad

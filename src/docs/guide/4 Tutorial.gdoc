@@ -30,7 +30,7 @@ Also add a dependency for the MySQL JDBC driver in @grails-app/conf/BuildConfig.
 
 {code}
 dependencies {
-   runtime 'mysql:mysql-connector-java:5.1.5'
+   runtime 'mysql:mysql-connector-java:5.1.22'
 }
 {code}
 
@@ -560,4 +560,3 @@ class Thing {
 {code}
 
 The domain class has a new @Boolean newColumn@ field and a @nullable@ constraint. Since this generated the correct changes it's safe to move replace the previous domain class with this one.
-

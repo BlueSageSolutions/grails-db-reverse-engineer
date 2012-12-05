@@ -1,4 +1,4 @@
-/* Copyright 2010-2011 SpringSource.
+/* Copyright 2010-2012 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,11 @@ package grails.plugin.reveng
 
 import java.util.regex.Pattern
 
-import org.apache.log4j.Logger
 import org.hibernate.cfg.reveng.DefaultReverseEngineeringStrategy
 import org.hibernate.cfg.reveng.TableIdentifier
 import org.hibernate.mapping.Table
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.util.AntPathMatcher
 
 /**
@@ -27,25 +28,25 @@ import org.springframework.util.AntPathMatcher
  */
 class GrailsReverseEngineeringStrategy extends DefaultReverseEngineeringStrategy {
 
-	private final Logger log = Logger.getLogger(getClass())
+	protected final Logger log = LoggerFactory.getLogger(getClass())
 
 	static final GrailsReverseEngineeringStrategy INSTANCE = new GrailsReverseEngineeringStrategy()
 
-	private Set<String> excludeTables = []
-	private Set<Pattern> excludeTableRegexes = []
-	private Set<String> excludeTableAntPatterns = []
-	private Set<String> includeTables = []
-	private Set<Pattern> includeTableRegexes = []
-	private Set<String> includeTableAntPatterns = []
-	private Map<String, List<String>> excludeColumns = [:]
-	private Map<String, List<Pattern>> excludeColumnRegexes = [:]
-	private Map<String, List<String>> excludeColumnAntPatterns = [:]
-	private Map<String, String> versionColumnNames = [:]
-	private Set<String> manyToManyTables = []
-	private Set<String> mappedManyToManyTables = []
-	private boolean alwaysMapManyToManyTables
-	private Map<String, String> belongsTos = [:]
-	private AntPathMatcher antMatcher = new AntPathMatcher()
+	protected Set<String> excludeTables = []
+	protected Set<Pattern> excludeTableRegexes = []
+	protected Set<String> excludeTableAntPatterns = []
+	protected Set<String> includeTables = []
+	protected Set<Pattern> includeTableRegexes = []
+	protected Set<String> includeTableAntPatterns = []
+	protected Map<String, List<String>> excludeColumns = [:]
+	protected Map<String, List<Pattern>> excludeColumnRegexes = [:]
+	protected Map<String, List<String>> excludeColumnAntPatterns = [:]
+	protected Map<String, String> versionColumnNames = [:]
+	protected Set<String> manyToManyTables = []
+	protected Set<String> mappedManyToManyTables = []
+	protected boolean alwaysMapManyToManyTables
+	protected Map<String, String> belongsTos = [:]
+	protected AntPathMatcher antMatcher = new AntPathMatcher()
 
 	@Override
 	boolean excludeTable(TableIdentifier ti) {
@@ -59,7 +60,7 @@ class GrailsReverseEngineeringStrategy extends DefaultReverseEngineeringStrategy
 		isExcluded name
 	}
 
-	private boolean isNotIncluded(String name) {
+	protected boolean isNotIncluded(String name) {
 		if (!includeTables.contains(name)) {
 			log.debug "table $name not included by name"
 			return true
@@ -82,7 +83,7 @@ class GrailsReverseEngineeringStrategy extends DefaultReverseEngineeringStrategy
 		false
 	}
 
-	private boolean isExcluded(String name) {
+	protected boolean isExcluded(String name) {
 		if (excludeTables.contains(name)) {
 			log.debug "table $name excluded by name"
 			return true
@@ -223,7 +224,7 @@ class GrailsReverseEngineeringStrategy extends DefaultReverseEngineeringStrategy
 		getOrCreateList(excludeColumnAntPatterns, table).addAll patterns
 	}
 
-	private List getOrCreateList(Map map, String key) {
+	protected List getOrCreateList(Map map, String key) {
 		List list = map[key]
 		if (list == null) {
 			list = []

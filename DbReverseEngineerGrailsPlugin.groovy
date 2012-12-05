@@ -1,4 +1,4 @@
-/* Copyright 2010-2011 SpringSource.
+/* Copyright 2010-2012 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,21 @@
  * limitations under the License.
  */
 class DbReverseEngineerGrailsPlugin {
-	String version = '0.4'
-	String grailsVersion = '1.3.0 > *'
+	String version = '0.5'
+	String grailsVersion = '2.0 > *'
 	String author = 'Burt Beckwith'
 	String authorEmail = 'beckwithb@vmware.com'
-	String title = 'Grails Reverse Engineering Plugin'
+	String title = 'Grails Database Reverse Engineering Plugin'
 	String description = 'Reverse-engineers a database to Grails domain classes.'
-	String documentation = 'http://grails.org/plugin/db-reverse-engineer'
+	String documentation = 'http://grails-plugins.github.com/grails-db-reverse-engineer/'
 
 	List pluginExcludes = [
 		'docs/**',
 		'src/docs/**'
 	]
+
+	String license = 'APACHE'
+	def organization = [name: 'SpringSource', url: 'http://www.springsource.org/']
+	def issueManagement = [system: 'JIRA', url: 'http://jira.grails.org/browse/GPREVERSEENGINEER']
+	def scm = [url: 'https://github.com/grails-plugins/grails-db-reverse-engineer']
 }

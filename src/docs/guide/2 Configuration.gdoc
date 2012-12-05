@@ -50,17 +50,3 @@ grails.plugin.reveng.overwriteExisting | @true@ | whether to overwrite existing 
 grails.plugin.reveng.defaultSchema | none | the default database schema name
 grails.plugin.reveng.defaultCatalog | none | the default database catalog name
 {table}
-
-h4. Properties for version 0.4
-
-Since the reverse engineering script is run in a separate forked JVM, it's not possible to know which JDBC driver you're using. So you need to specify it using the @g.p.r.jdbcDriverJarDep@ or @g.p.r.jdbcDriverJarPath@ option. @g.p.r.jdbcDriverJarDep@ is an Ivy dependency syntax string specifying which JDBC jar to use. The syntax is the same as what you use in @BuildConfig.groovy@, e.g. 'mysql:mysql-connector-java:5.1.13'. If the jar isn't available at Maven Central and you have the jar file, you can instead specify the full path to the jar with @g.p.r.jdbcDriverJarPath@. One of these two properties must be specified.
-
-The script uses Ivy to resolve several jars. This should work well but you can adjust the logging level of the Ivy resolver, just like you can in BuildConfig.groovy. To do this, specify the @g.p.r.ivyLogLevel@ property to one of 'error', 'warn', 'info', 'debug' or 'verbose'.
-
-{table}
-*Property* | *Default* | *Meaning*
-grails.plugin.reveng.jdbcDriverJarDep | none | Ivy dependency syntax string for the JDBC driver
-grails.plugin.reveng.jdbcDriverJarPath | none | Path to an existing JDBC jar
-grails.plugin.reveng.ivyLogLevel | 'warn' | The log level of the Ivy resolver
-{table}
-

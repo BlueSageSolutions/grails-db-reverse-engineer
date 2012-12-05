@@ -1,4 +1,4 @@
-<project name='appinfo' default='package'>
+<project name='db-reverse-engineer' default='package'>
 
 	<condition property='grails' value='grails.bat'>
 		<os family='windows'/>

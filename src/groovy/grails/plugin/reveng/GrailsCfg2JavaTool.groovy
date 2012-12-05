@@ -1,4 +1,4 @@
-/* Copyright 2010-2011 SpringSource.
+/* Copyright 2010-2012 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ import org.hibernate.tool.hbm2x.pojo.POJOClass
  */
 class GrailsCfg2JavaTool extends Cfg2JavaTool {
 
-	private Cfg2HbmTool c2h
-	private Configuration configuration
-	private ConfigObject revengConfig
+	protected Cfg2HbmTool c2h
+	protected Configuration configuration
+	protected ConfigObject revengConfig
 
 	GrailsCfg2JavaTool(Cfg2HbmTool c2h, Configuration configuration, ConfigObject revengConfig) {
 		this.c2h = c2h

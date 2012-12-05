@@ -1,4 +1,4 @@
-/* Copyright 2010-2011 SpringSource.
+/* Copyright 2010-2012 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
  */
 package grails.plugin.reveng
 
-import org.apache.log4j.Logger
 import org.hibernate.tool.hbm2x.ArtifactCollector
 import org.hibernate.tool.hbm2x.ExporterException
 import org.hibernate.tool.hbm2x.TemplateHelper
 import org.hibernate.tool.hbm2x.TemplateProducer
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * Doesn't overwrite existing classes if configured not to.
@@ -27,10 +28,11 @@ import org.hibernate.tool.hbm2x.TemplateProducer
  */
 class GrailsTemplateProducer extends TemplateProducer {
 
-	private Logger log = Logger.getLogger(getClass())
-	private TemplateHelper templateHelper
-	private ArtifactCollector artifactCollector
-	private boolean overwrite
+	protected Logger log = LoggerFactory.getLogger(getClass())
+
+	protected TemplateHelper templateHelper
+	protected ArtifactCollector artifactCollector
+	protected boolean overwrite
 
 	GrailsTemplateProducer(TemplateHelper templateHelper, ArtifactCollector artifactCollector,
 			boolean overwrite) {
@@ -77,7 +79,7 @@ class GrailsTemplateProducer extends TemplateProducer {
 		}
 	}
 
-	private String produceToString(Map additionalContext, String templateName, String rootContext) {
+	protected String produceToString(Map additionalContext, String templateName, String rootContext) {
 		additionalContext.each { k, v -> templateHelper.putInContext k, v }
 
 		StringWriter writer = new StringWriter()
@@ -96,7 +98,7 @@ class GrailsTemplateProducer extends TemplateProducer {
 		fixWhitespace writer.toString()
 	}
 
-	private String fixWhitespace(String content) {
+	protected String fixWhitespace(String content) {
 		String newline = System.getProperty('line.separator')
 		def lines = []
 		content.eachLine { lines << it }
@@ -128,7 +130,7 @@ class GrailsTemplateProducer extends TemplateProducer {
 		lines.join(newline).trim() + newline
 	}
 
-	private boolean isBlankLine(String line) {
+	protected boolean isBlankLine(String line) {
 		!line || !line.trim()
 	}
 }

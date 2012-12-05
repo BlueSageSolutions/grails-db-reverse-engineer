@@ -1,4 +1,4 @@
-/* Copyright 2010-2011 SpringSource.
+/* Copyright 2010-2012 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,10 @@ import org.hibernate.cfg.reveng.dialect.MetaDataDialect
  */
 class GrailsJdbcBinder extends JDBCBinder {
 
-	private Settings settings
-	private JDBCMetaDataConfiguration cfg
-	private Mappings mappings
-	private ReverseEngineeringStrategy revengStrategy
+	protected Settings settings
+	protected JDBCMetaDataConfiguration cfg
+	protected Mappings mappings
+	protected ReverseEngineeringStrategy revengStrategy
 
 	GrailsJdbcBinder(JDBCMetaDataConfiguration cfg, Settings settings, Mappings mappings,
 			ReverseEngineeringStrategy revengStrategy) {
@@ -56,7 +56,7 @@ class GrailsJdbcBinder extends JDBCBinder {
 		JDBCReader reader = new JDBCReader(mdd, settings.connectionProvider, settings.getSQLExceptionConverter(),
 				settings.defaultCatalogName, settings.defaultSchemaName, revengStrategy)
 
-		DatabaseCollector dbs = new MappingsDatabaseCollector(mappings)
+		DatabaseCollector dbs = new MappingsDatabaseCollector(mappings, mdd)
 		reader.readDatabaseSchema dbs, catalog, schema, new ReverseEngineerProgressListener()
 		dbs
 	}

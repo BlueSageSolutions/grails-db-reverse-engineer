@@ -1,4 +1,4 @@
-/* Copyright 2010-2011 SpringSource.
+/* Copyright 2010-2012 SpringSource.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,10 @@ import org.hibernate.cfg.reveng.ReverseEngineeringStrategy
 class GrailsJdbcMetaDataConfiguration extends JDBCMetaDataConfiguration {
 
 	void readFromJDBC(String defaultCatalog, String defaultSchema) {
+
 		GrailsJdbcBinder binder = new GrailsJdbcBinder(
 			this, buildSettings(), createMappings(), getReverseEngineeringStrategy())
+
 		binder.readFromDatabase defaultCatalog, defaultSchema, buildMapping(this)
 	}
 }
