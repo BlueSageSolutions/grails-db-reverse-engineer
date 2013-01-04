@@ -555,7 +555,9 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
         if (!prop.type.isCollectionType() && prop.isNullable()) {
             // values.nullable = true
         } else {
-            if (javaTypeName.equalsIgnoreCase('String')) {
+            // Special handling for lender_loan_number in HomeLoan - we need to be able to pass an empty string to force
+            // the trigger to generate a new loan number
+            if (!prop.name.equalsIgnoreCase('lenderLoanNumber') && javaTypeName.equalsIgnoreCase('String')) {
                 annotationBuilder.append(' @NotBlank')
             } else {
                 annotationBuilder.append(' @NotNull')
