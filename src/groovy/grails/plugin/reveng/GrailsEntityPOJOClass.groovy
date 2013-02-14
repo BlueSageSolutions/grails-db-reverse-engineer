@@ -49,14 +49,24 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		'long':    'Long',
 		'short':   'Short']
 
-    //paulb: these will be specified in our BaseDomain class
+    //paulb: these will be defined in BaseDomain
     private static final ignoredProperties = [
             'createdDateTime',
             'createdByUserId',
             'modifiedDateTime',
-            'modifiedByUserId',
+            'modifiedByUserId']
+
+    //paulb: these will be defined in BaseRefDomain
+    private static final ignoredPropertiesForRefClass = [
             'effectiveDateTime',
-            'expirationDateTime']
+            'expirationDateTime'
+    ]
+
+    //paulb: these will be defined in BaseSysDomain
+    private static final ignoredPropertiesForSysClass = [
+            'effectiveDateTime',
+            'expirationDateTime'
+    ]
 
     //paulb: properties that contain the word 'date' but are not dates
     private static final ignoredDateProperties = [
@@ -313,7 +323,9 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		def constraints = new StringBuilder()
 
 		getAllPropertiesIterator().each { Property property ->
-            if (ignoredProperties.contains(property.name)) {
+            if (ignoredProperties.contains(property.name) ||
+                (isRefClass() && ignoredPropertiesForRefClass.contains(property.name)) ||
+                (isSysClass() && ignoredPropertiesForSysClass.contains(property.name))) {
                 return
             }
 
@@ -525,7 +537,12 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		def props = new StringBuilder()
 		getAllPropertiesIterator().each { Property property ->
 			if (getMetaAttribAsBool(property, 'gen-property', true)) {
-				if (findRealIdName(property) == property.name && !ignoredProperties.contains(property.name)) {
+				if (findRealIdName(property) != property.name ||
+                        (ignoredProperties.contains(property.name) ||
+                                (isRefClass() && ignoredPropertiesForRefClass.contains(property.name)) ||
+                                (isSysClass() && ignoredPropertiesForSysClass.contains(property.name)))) {
+                    return
+                } else {
                     String javaTypeName = getJavaTypeName(property, true)
                     appendAnnotations(property, javaTypeName, props);
 					props.append '\t'
@@ -668,4 +685,12 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 		buffer.append end
 		buffer.toString()
 	}
+
+    private boolean isRefClass() {
+        getDeclarationName().substring(0,3).equals("Ref")
+    }
+
+    private boolean isSysClass() {
+        getDeclarationName().substring(0,3).equals("Sys")
+    }
 }
