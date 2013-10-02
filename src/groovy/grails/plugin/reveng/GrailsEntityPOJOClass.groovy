@@ -74,6 +74,14 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
             'dueDateHours',
             'dueDateCalendarTypeId']
 
+    //paulb: domain names that should NOT be subclasses from BaseSysDomain
+    private static final ignoredSysClasses = [
+            'SysUser',
+            'SysAccessItem',
+            'SysAccessLoanPermission',
+            'SysAccessRolePermission'
+    ]
+
     protected PersistentClass clazz
     protected Cfg2HbmTool c2h
     protected Configuration configuration
@@ -620,7 +628,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
         String baseClass = "BaseDomain"
         if (prefix.equals('Ref')) {
             baseClass = "BaseRefDomain"
-        } else if (prefix.equals('Sys') && !declarationName.equalsIgnoreCase('SysUser')) {
+        } else if (prefix.equals('Sys') && !ignoredSysClasses.contains(declarationName)) {
             baseClass = "BaseSysDomain"
         }
 
