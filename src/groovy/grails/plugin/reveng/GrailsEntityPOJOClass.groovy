@@ -72,7 +72,10 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
     private static final ignoredDateProperties = [
             'dueDateDays',
             'dueDateHours',
-            'dueDateCalendarTypeId']
+            'dueDateCalendarTypeId',
+			'dateTypeId',
+			'dateTypeDesc'
+	]
 
     //paulb: domain names that should NOT be subclasses from BaseSysDomain
     private static final ignoredSysClasses = [
