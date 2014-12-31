@@ -74,7 +74,9 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
             'dueDateHours',
             'dueDateCalendarTypeId',
 			'dateTypeId',
-			'dateTypeDesc'
+			'dateTypeDesc',
+			'titleUpdateFeesCount',
+			'titleUpdateFeesCostAmt'
 	]
 
     //paulb: domain names that should NOT be subclasses from BaseSysDomain
