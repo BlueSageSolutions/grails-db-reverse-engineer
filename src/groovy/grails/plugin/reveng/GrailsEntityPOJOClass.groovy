@@ -82,10 +82,11 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 
     //paulb: domain names that should NOT be subclasses from BaseSysDomain
     private static final ignoredSysClasses = [
-            'SysUser',
             'SysAccessItem',
             'SysAccessLoanPermission',
-            'SysAccessRolePermission'
+            'SysAccessRolePermission',
+            'SysUser',
+            'SysUserPasswordHistory'
     ]
 
     protected PersistentClass clazz
