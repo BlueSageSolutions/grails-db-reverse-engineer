@@ -70,6 +70,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 
     //paulb: properties that contain the word 'date' but are not dates
     private static final ignoredDateProperties = [
+			'autoUpdatedYn',
 			'dateTypeId',
 			'dateTypeDesc',
 			'dueDateCalendarTypeId',
