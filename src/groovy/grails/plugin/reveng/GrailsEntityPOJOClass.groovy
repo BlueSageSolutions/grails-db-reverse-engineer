@@ -80,7 +80,9 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			'titleUpdateFeesCount',
 			'titleUpdateFeesCostAmt',
 			'actionDateTimeMillis',
-			'expirationDateOverrideYn'
+			'expirationDateOverrideYn',
+			'requestDateTimeMillis',
+			'responseDateTimeMillis'
 	]
 
     //paulb: domain names that should NOT be subclasses from BaseSysDomain
