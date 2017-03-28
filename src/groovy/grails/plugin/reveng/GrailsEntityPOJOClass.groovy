@@ -94,6 +94,29 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
             'SysUserPasswordHistory'
     ]
 
+    //paulb: domain names that should NOT be subclasses from BaseRefDomain
+    private static final ignoredRefClasses = [
+			"ReferalPartner",
+			"ReferalPartnerAccessHistory",
+			"ReferalPartnerActivity",
+			"ReferalPartnerAlert",
+			"ReferalPartnerAppointment",
+			"ReferalPartnerAssignment",
+			"ReferalPartnerAssociate",
+			"ReferalPartnerLicense",
+			"ReferalPartnerManTsk",
+			"ReferalPartnerManTskAssign",
+			"ReferalPartnerManTskNote",
+			"ReferalPartnerManTskStatus",
+			"ReferalPartnerNote",
+			"ReferalPartnerStatusHistory",
+			"ReferalPartnerTask",
+			"ReferalPartnerTaskAssignment",
+			"ReferalPartnerTaskNote",
+			"ReferalPartnerTaskStatus",
+			"ReferalPartnerTelephone"
+	]
+
     protected PersistentClass clazz
     protected Cfg2HbmTool c2h
     protected Configuration configuration
@@ -638,7 +661,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
         String declarationName = getDeclarationName()
         String prefix = declarationName.substring(0,3)
         String baseClass = "BaseDomain"
-        if (prefix.equals('Ref')) {
+        if (prefix.equals('Ref') && !ignoredRefClasses.contains(declarationName)) {
             baseClass = "BaseRefDomain"
         } else if (prefix.equals('Sys') && !ignoredSysClasses.contains(declarationName)) {
             baseClass = "BaseSysDomain"
