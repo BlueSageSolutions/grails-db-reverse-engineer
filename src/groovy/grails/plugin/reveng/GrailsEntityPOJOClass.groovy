@@ -82,7 +82,14 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			'actionDateTimeMillis',
 			'expirationDateOverrideYn',
 			'requestDateTimeMillis',
-			'responseDateTimeMillis'
+			'responseDateTimeMillis',
+			'batchUpdateByUserId',
+			'batchUpdateDesc',
+			'manualUpdateYn',
+			'manualUpdateLoanLis',
+			'manualUpdateContent',
+			'updateFileName',
+			'updateFileContent'
 	]
 
     //paulb: domain names that should NOT be subclasses from BaseSysDomain
@@ -91,6 +98,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
             'SysAccessLoanPermission',
             'SysAccessRolePermission',
             'SysUser',
+			'SysUserCommLog',
             'SysUserPasswordHistory'
     ]
 
@@ -103,6 +111,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			"ReferalPartnerAppointment",
 			"ReferalPartnerAssignment",
 			"ReferalPartnerAssociate",
+			'ReferalPartnerCommLog',
 			"ReferalPartnerLicense",
 			"ReferalPartnerManTsk",
 			"ReferalPartnerManTskAssign",
