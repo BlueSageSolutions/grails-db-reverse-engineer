@@ -111,6 +111,8 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			"ReferalPartnerAppointment",
 			"ReferalPartnerAssignment",
 			"ReferalPartnerAssociate",
+			"ReferalPartnerAssocCommLog",
+			"ReferalPartnerAssocPhone",
 			'ReferalPartnerCommLog',
 			"ReferalPartnerLicense",
 			"ReferalPartnerManTsk",
