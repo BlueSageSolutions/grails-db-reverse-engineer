@@ -89,7 +89,10 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			'manualUpdateLoanLis',
 			'manualUpdateContent',
 			'updateFileName',
-			'updateFileContent'
+			'updateFileContent',
+			'titleUpdatesCount',
+			'titleUpdatesAmt',
+			'titleUpdatesTotalAmt'
 	]
 
     //paulb: domain names that should NOT be subclasses from BaseSysDomain
