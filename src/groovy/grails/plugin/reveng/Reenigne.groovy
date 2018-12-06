@@ -51,6 +51,7 @@ class Reenigne {
 	GrailsReverseEngineeringStrategy reverseEngineeringStrategy = GrailsReverseEngineeringStrategy.INSTANCE
 
 	protected GrailsPojoExporter pojoExporter
+	protected HydraExporter hydraExporter
 	protected HibernateMappingExporter hbmXmlExporter = new HibernateMappingExporter()
 	protected GrailsJdbcMetaDataConfiguration configuration = new GrailsJdbcMetaDataConfiguration()
 	protected Properties properties = new Properties()
@@ -68,6 +69,13 @@ class Reenigne {
 
 			pojoExporter.start()
 //			hbmXmlExporter.start()
+
+			println "\nStarting Hydra class generation"
+			hydraExporter = new HydraExporter(overwrite, revengConfig)
+			configureExporter hydraExporter
+			hydraExporter.getProperties().setProperty('ejb3', ejb3.toString())
+			hydraExporter.getProperties().setProperty('jdk5', jdk5.toString())
+			hydraExporter.start()
 		}
 		catch (e) {
 			GrailsUtil.sanitize e
