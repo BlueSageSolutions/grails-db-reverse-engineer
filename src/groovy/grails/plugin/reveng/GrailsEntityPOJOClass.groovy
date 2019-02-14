@@ -140,6 +140,16 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			"ReferalPartnerTelephone"
 	]
 
+	//paulb: domain classes that need a Hydra class reference generated
+ 	private static final generateHydraRefClasses = [
+			'Contact',
+			'ContactNote',
+			'HomeLoan',
+			'HomeLoanBorrower',
+			'RefInterfaceEnumTranslation',
+			'SysGlobalExternalSystem'
+ 	]
+
     protected PersistentClass clazz
     protected Cfg2HbmTool c2h
     protected Configuration configuration
@@ -701,7 +711,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 	}
 
 	String renderHydraLink() {
-		"\tstatic graphql = com.bss.hydra.graphql.queries.${declarationName}.Query()"
+		return generateHydraRefClasses.contains(declarationName) ? "\tstatic graphql = com.bss.hydra.graphql.queries.${declarationName}.Query()" : ""
 	}
 
 	String getJavaTypeName(Property p, boolean useGenerics) {
