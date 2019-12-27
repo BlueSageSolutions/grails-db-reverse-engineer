@@ -110,6 +110,7 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
             'SysAccessLoanPermission',
             'SysAccessRolePermission',
             'SysUser',
+			'SysUserActiveSession',
 			'SysUserCommLog',
             'SysUserPasswordHistory'
     ]
