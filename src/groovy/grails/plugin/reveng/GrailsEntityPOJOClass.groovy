@@ -93,7 +93,8 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			'titleUpdatesCount',
 			'titleUpdatesAmt',
 			'titleUpdatesTotalAmt',
-			'pendingBaselineUpdateYn'
+			'pendingBaselineUpdateYn',
+			'updateActivityTypeId'
 	]
 
 	//paulb: properties that contain the word 'time' but are not dates
