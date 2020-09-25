@@ -94,6 +94,8 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			'titleUpdatesAmt',
 			'titleUpdatesTotalAmt',
 			'pendingBaselineUpdateYn',
+			'restrictPriorCreateDateYn',
+			'restrictPostCalcDueDateYn',
 			'updateActivityTypeId',
 			'monitoringStartDate'
 	]
