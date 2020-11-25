@@ -97,7 +97,8 @@ class GrailsEntityPOJOClass extends EntityPOJOClass {
 			'restrictPriorCreateDateYn',
 			'restrictPostCalcDueDateYn',
 			'updateActivityTypeId',
-			'monitoringStartDate'
+			'monitoringStartDate',
+			'loanCountStatusUpdate'
 	]
 
 	//paulb: properties that contain the word 'time' but are not dates
